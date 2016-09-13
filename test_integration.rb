@@ -2,7 +2,6 @@
 
 require 'net/ssh'
 require 'colorize'
-require 'timeout'
 
 $host = ARGV[0]
 $os = nil
@@ -123,11 +122,7 @@ def is_host_rebooting?
     ret = nil
     sleep 10
     begin
-      status = Timeout::timeout(20) {
-        #print "RUNNING WHO -R\n"
-        ret = ssh_command("who -r")
-        #print "DONE RUNNING WHO -R\n"
-      }
+      ret = ssh_command("who -r")
     rescue Timeout::Error => e
       puts "Exception #{e} occured, continuing..."
       next
