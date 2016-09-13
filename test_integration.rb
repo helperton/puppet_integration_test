@@ -145,4 +145,4 @@ end
 # Begin main script
 which_os
 rsync_revert
-#reboot_host
+reboot_host
