@@ -147,4 +147,4 @@ end
 which_os
 rsync_revert
 stop_agent
-reboot_host
+#reboot_host
