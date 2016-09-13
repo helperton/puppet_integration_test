@@ -2,6 +2,7 @@
 
 require 'net/ssh'
 require 'colorize'
+require 'timeout'
 
 $host = ARGV[0]
 
@@ -100,7 +101,7 @@ def reboot_and_wait_for_host(host = $host)
   sleep 10
   status = 1
   while status > 0
-    check_if_host_rebooting(host)
+    is_host_rebooting?
     puts "#{nls}Verifying host rebooted ...#{nls}"
     ssh_command("ls >/dev/null")
     status = $?.exitstatus
@@ -109,6 +110,29 @@ def reboot_and_wait_for_host(host = $host)
   ret = ssh_command("ls")
   puts "#{nls}Host is back up!#{nls}"
   ret
+end
+
+def is_host_rebooting?
+  rebooting = 1
+  while rebooting > 0
+    print "\n\n\nChecking if host is still rebooting ... "
+    ret = nil
+    sleep 10
+    begin
+      status = Timeout::timeout(20) {
+        ret = ssh_command("who -r")[:stdout].first.split(/\s+/)[3].to_i
+      }
+    rescue Timeout::Error => e
+      puts "Exception #{e} occured, continuing..."
+      next
+    end
+    if $?.exitstatus == 0 && ret == 6
+      puts "yes ... continuing to wait."
+      sleep 10
+    else
+      rebooting = 0
+    end
+  end
 end
 
 
