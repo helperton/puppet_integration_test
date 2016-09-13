@@ -10,28 +10,26 @@ $host = ARGV[0]
 # By default won't print output to the screen, you may turn on.
 # Example: ssh_command("ls", p_stdout: true, p_stderr: true )
 # Will make both stdout and stderr print out during the run
-def ssh_command(cmd, options = {})
-  defaults = { :p_stdout => false, :p_stderr => false, :ssh_timeout => 10 }
-  options = defaults.merge(options)
-  puts "SSH_TIMEOUT: #{options[:ssh_timeout]}"
+def ssh_command(cmd, p_stdout: false, p_stderr: false, ssh_timeout: 10)
+  puts "SSH_TIMEOUT: #{:ssh_timeout}"
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
-  Net::SSH.start($host, 'root', :paranoid => false, :timeout => options[:ssh_timeout]) do |ssh|
+  Net::SSH.start($host, 'root', :paranoid => false, :timeout => ssh_timeout) do |ssh|
     channel = ssh.open_channel do |ch|
       ch.exec cmd do |ch, success|
         raise "could not execute command" unless success
         # "on_data" is called when the process writes something to stdout
         ch.on_data do |c, data|
           stdout.push(data)
-          $stdout.print data if options[:p_stdout]
+          $stdout.print data if p_stdout
           $stdout.flush
         end
 
         # "on_extended_data" is called when the process writes something to stderr
         ch.on_extended_data do |c, type, data|
           stderr.push(data)
-          $stderr.print data if options[:p_stderr]
+          $stderr.print data if p_stderr
           $stderr.flush
         end
 
@@ -123,13 +121,13 @@ def is_host_rebooting?
     sleep 10
     begin
       status = Timeout::timeout(20) {
-        ret = ssh_command("who -r", ssh_timeout: 3600)[:stdout].first.split(/\s+/)[3].to_i
+        ret = ssh_command("who -r", ssh_timeout: 3600)
       }
     rescue Timeout::Error => e
       puts "Exception #{e} occured, continuing..."
       next
     end
-    if $?.exitstatus == 0 && ret == 6
+    if ret[:exit_code] == 0 && ret[:stdout].first.split(/\s+/)[3].to_i == 6
       puts "yes ... continuing to wait."
       sleep 10
     else
