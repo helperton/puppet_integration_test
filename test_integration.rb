@@ -3,7 +3,7 @@
 $host = ARGV[0]
 
 def ssh_command(cmd, host = $host)
-  %X(ssh -q -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@#{host} #{cmd})
+  %x(ssh -q -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@#{host} #{cmd})
 end
 
 def which_os
@@ -12,7 +12,7 @@ end
 
 def stop_agent
   puts "Stopping and disabling agent!"
-  ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
+  ssh_command("printf \"service \{ \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n\}\n\" > /tmp/puppet-service.pp")
   ssh_command("puppet apply /tmp/puppet-service.pp")
 end
 
