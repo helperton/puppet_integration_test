@@ -15,16 +15,15 @@ def rsync_revert
 
   case which_os
   when "linux"
-    rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /proc --exclude /sys --exclude /selinux --exclude '/var/run/*.pid' --exclude '/var/run/*/*.pid' --exclude /nfs --exclude /var/lib/nfs /var/recover/ /"
+    rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /proc --exclude /sys --exclude /selinux --exclude '/var/run/*.pid' --exclude '/var/run/*/*.pid' --exclude /nfs --exclude /depot --exclude /var/lib/nfs /var/recover/ /"
   when "aix"
     rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /proc --exclude /nfs /var/recover/ /"
   when "sunos"
    rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /devices --exclude /proc --exclude /system --exclude /nfs --exclude /etc/svc/volatile --exclude /etc/mnttab --exclude /etc/dfs/sharetab --exclude /var/run --exclude '/etc/sysevent/*door*' --exclude '/etc/sysevent/*channel*' --exclude /rpool /var/recover/ /"
   end
 
-  print "#{nls}Reverting host to fresh state ..."
-  ssh_command(rsync_cmd)
-  print " done.#{nls}"
+  print "#{nls}Reverting host to fresh state ...#{nls}"
+  puts ssh_command(rsync_cmd)
 end
 
 def reboot_command(host = $host)
