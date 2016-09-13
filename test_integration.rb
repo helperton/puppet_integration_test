@@ -103,13 +103,13 @@ def reboot_and_wait_for_host
   while status > 0
     is_host_rebooting?
     puts "#{nls}Verifying host rebooted ...#{nls}"
-    ret = ssh_command("ls >/dev/null")
+    ret = ssh_command("ls >/dev/null", ssh_timeout: 2)
     status = ret[:exit_code]
     print "#{nls}Sleeping for 10 seconds ...#{nls}"
     sleep 10
     flush_output
   end
-  ret = ssh_command("ls")
+  ret = ssh_command("ls", ssh_timeout: 2)
   puts "#{nls}Host is back up!#{nls}"
   ret[:exit_code]
 end
@@ -127,7 +127,7 @@ def is_host_rebooting?
     ret = nil
     sleep 10
     begin
-      ret = ssh_command("who -r")
+      ret = ssh_command("who -r", ssh_timeout: 2)
       flush_output
     rescue Exception => e
       print "Exception #{e} occured, continuing...\n"
