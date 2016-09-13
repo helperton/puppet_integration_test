@@ -65,7 +65,7 @@ def rsync_revert
   end
 
   print "#{nls}Reverting host to fresh state ...#{nls}"
-  puts ssh_command(rsync_cmd)
+  ssh_command(rsync_cmd)
 end
 
 def reboot_command(host = $host)
