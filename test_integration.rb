@@ -1,9 +1,38 @@
 #!/usr/bin/env ruby
 
+require 'net/ssh'
+
 $host = ARGV[0]
 
 def ssh_command(cmd, host = $host)
-  `ssh -q -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@#{host} #{cmd}`
+  #%x(ssh -q -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@#{host} #{cmd})
+  exit_code = 0
+  Net::SSH.start(host, 'root', :paranoid => false, :timeout => 10) do |ssh|
+    channel = ssh.open_channel do |ch|
+      ch.exec cmd do |ch, success|
+        raise "could not execute command" unless success
+        # "on_data" is called when the process writes something to stdout
+        ch.on_data do |c, data|
+          $stdout.print data
+          $stdout.flush
+        end
+
+        # "on_extended_data" is called when the process writes something to stderr
+        ch.on_extended_data do |c, type, data|
+          $stderr.print data
+          $stderr.flush
+        end
+
+        ch.on_request("exit-status") do |c, data|
+          exit_code = data.read_long
+        end
+
+        ch.on_close { puts "Ending command with exit code: #{exit_code}" }
+      end
+    end
+    channel.wait
+  end
+  exit_code
 end
 
 def which_os
@@ -12,8 +41,8 @@ end
 
 def stop_agent
   puts "#{nls}Stopping and disabling agent!#{nls}"
-  ssh_command("'printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp'")
-  #ssh_command("puppet apply /tmp/puppet-service.pp")
+  ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
+  ssh_command("puppet apply /tmp/puppet-service.pp")
 end
 
 def rsync_revert
@@ -58,18 +87,18 @@ end
 def reboot_and_wait_for_host(host = $host)
   stop_agent
   puts "#{nls}Rebooting host and waiting ...#{nls}"
-  ret = %x(#{ssh_command} "nohup #{reboot_command} &")
+  ret = ssh_command("nohup #{reboot_command} &")
   puts ret
   sleep 10
   status = 1
   while status > 0
     check_if_host_rebooting(host)
     puts "#{nls}Verifying host rebooted ...#{nls}"
-    %x(#{ssh_command} ls >/dev/null)
+    ssh_command("ls >/dev/null")
     status = $?.exitstatus
     sleep 10
   end
-  ret = %x(#{ssh_command} ls)
+  ret = ssh_command("ls")
   puts "#{nls}Host is back up!#{nls}"
   ret
 end
