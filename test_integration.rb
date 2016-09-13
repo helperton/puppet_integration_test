@@ -123,12 +123,12 @@ def is_host_rebooting?
     sleep 10
     begin
       ret = ssh_command("who -r")
-    rescue Timeout::Error => e
-      puts "Exception #{e} occured, continuing..."
+    rescue Exception => e
+      print "Exception #{e} occured, continuing...\n"
       next
     end
     if ret[:exit_code] == 0 && ret[:stdout].first.split(/\s+/)[3].to_i == 6
-      puts "yes ... continuing to wait."
+      print "yes ... continuing to wait.\n"
       sleep 10
     else
       rebooting = 0
