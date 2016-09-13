@@ -11,8 +11,8 @@ def which_os
 end
 
 def stop_agent
-  puts "Stopping and disabling agent!"
-  ssh_command("printf \"service \{ \'puppet\':\\n\\tensure    => \'stopped\',\\n\\tenable    => \'false\',\\n\}\\n\" > /tmp/puppet-service.pp")
+  puts "#{nls}Stopping and disabling agent!#{nls}"
+  #ssh_command("printf \"service \{ \'puppet\':\\n\\tensure    => \'stopped\',\\n\\tenable    => \'false\',\\n\}\\n\" > /tmp/puppet-service.pp")
   ssh_command("puppet apply /tmp/puppet-service.pp")
 end
 
