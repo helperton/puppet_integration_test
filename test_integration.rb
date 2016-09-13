@@ -93,6 +93,7 @@ def nls(num = 3)
 end
 
 def reboot_and_wait_for_host
+  flush_output
   print "#{nls}Sleeping for 10 seconds ...#{nls}"
   sleep 10
   print "#{nls}Rebooting host and waiting ...#{nls}"
@@ -106,6 +107,7 @@ def reboot_and_wait_for_host
     status = ret[:exit_code]
     print "#{nls}Sleeping for 10 seconds ...#{nls}"
     sleep 10
+    flush_output
   end
   ret = ssh_command("ls")
   puts "#{nls}Host is back up!#{nls}"
