@@ -57,7 +57,7 @@ end
 def stop_agent
   print "#{nls}Stopping and disabling agent!#{nls}"
   ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
-  print ssh_command("puppet apply /tmp/puppet-service.pp")[:stdout].join("\n")
+  ssh_command("puppet apply /tmp/puppet-service.pp", p_stdout: true)
 end
 
 def rsync_revert
@@ -102,8 +102,9 @@ end
 def reboot_and_wait_for_host(host = $host)
   stop_agent
   print "#{nls}Rebooting host and waiting ...#{nls}"
-  ret = ssh_command("nohup #{reboot_command} &")
-  puts ret
+  ret = ssh_command("nohup #{reboot_command} &", p_stdout: true)
+  #puts ret[:exit_code]
+  print "#{nls}Sleeping for 10 seconds ...#{nls}"
   sleep 10
   status = 1
   while status > 0
@@ -126,7 +127,7 @@ def is_host_rebooting?
     sleep 10
     begin
       status = Timeout::timeout(20) {
-        ret = ssh_command("who -r", ssh_timeout: 3600)
+        ret = ssh_command("who -r")
       }
     rescue Timeout::Error => e
       puts "Exception #{e} occured, continuing..."
