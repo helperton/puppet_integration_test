@@ -4,22 +4,26 @@ require 'net/ssh'
 
 $host = ARGV[0]
 
-def ssh_command(cmd, host = $host)
+def ssh_command(cmd, print_stdout = false, print_stderr = false, host = $host)
   #%x(ssh -q -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@#{host} #{cmd})
   exit_code = 0
+  stdout = Array.new
+  stderr = Array.new
   Net::SSH.start(host, 'root', :paranoid => false, :timeout => 10) do |ssh|
     channel = ssh.open_channel do |ch|
       ch.exec cmd do |ch, success|
         raise "could not execute command" unless success
         # "on_data" is called when the process writes something to stdout
         ch.on_data do |c, data|
-          $stdout.print data
+          stdout.push(data)
+          $stdout.print data if print_stdout
           $stdout.flush
         end
 
         # "on_extended_data" is called when the process writes something to stderr
         ch.on_extended_data do |c, type, data|
-          $stderr.print data
+          stderr.push(data)
+          $stderr.print data if print_stderr
           $stderr.flush
         end
 
@@ -32,11 +36,11 @@ def ssh_command(cmd, host = $host)
     end
     channel.wait
   end
-  exit_code
+  return exit_code, stdout, stderr
 end
 
 def which_os
-  ssh_command("uname -s").chomp.downcase
+  ssh_command("uname -s").first.chomp.downcase
 end
 
 def stop_agent
