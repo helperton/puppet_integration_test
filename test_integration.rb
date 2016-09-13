@@ -8,10 +8,9 @@ $host = ARGV[0]
 $os = nil
 
 # This guy returns a hash, exit_code (Fixnum), stdout (Array), stderr (Array)
-# By default won't print output to the screen, you may turn on.
-# Example: ssh_command("ls", p_stdout: true, p_stderr: true )
-# Will make both stdout and stderr print out during the run
-def ssh_command(cmd, p_stdout: false, p_stderr: false, ssh_timeout: 10)
+# By default will print output to the screen, you may turn off.
+# Example: ssh_command("ls", p_stdout: false, p_stderr: false )
+def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
   puts "SSH_TIMEOUT: #{ssh_timeout} CMD: #{cmd}"
   exit_code = 0
   stdout = Array.new
@@ -57,7 +56,7 @@ end
 def stop_agent
   print "#{nls}Stopping and disabling agent!#{nls}"
   ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
-  ssh_command("puppet apply /tmp/puppet-service.pp", p_stdout: true)
+  ssh_command("puppet apply /tmp/puppet-service.pp")
 end
 
 def rsync_revert
@@ -102,7 +101,7 @@ end
 def reboot_and_wait_for_host(host = $host)
   stop_agent
   print "#{nls}Rebooting host and waiting ...#{nls}"
-  ret = ssh_command("nohup #{reboot_command} &", p_stdout: true)
+  ret = ssh_command("nohup #{reboot_command} &")
   #puts ret[:exit_code]
   print "#{nls}Sleeping for 10 seconds ...#{nls}"
   sleep 10
@@ -127,9 +126,9 @@ def is_host_rebooting?
     sleep 10
     begin
       status = Timeout::timeout(20) {
-        print "RUNNING WHO -R\n"
+        #print "RUNNING WHO -R\n"
         ret = ssh_command("who -r")
-        print "DONE RUNNING WHO -R\n"
+        #print "DONE RUNNING WHO -R\n"
       }
     rescue Timeout::Error => e
       puts "Exception #{e} occured, continuing..."
