@@ -92,13 +92,9 @@ def nls(num = 3)
   newlines.join("")
 end
 
-def reboot_host
-  reboot_and_wait_for_host
-end
-
-def reboot_and_wait_for_host(host = $host)
+def reboot_and_wait_for_host
   print "#{nls}Rebooting host and waiting ...#{nls}"
-  ret = ssh_command("nohup #{reboot_command} &")
+  ret = ssh_command("nohup #{reboot_command}")
   #puts ret[:exit_code]
   print "#{nls}Sleeping for 10 seconds ...#{nls}"
   sleep 10
@@ -141,4 +137,4 @@ end
 which_os
 rsync_revert
 stop_agent
-reboot_host
+reboot_and_wait_for_host
