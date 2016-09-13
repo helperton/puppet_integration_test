@@ -93,17 +93,18 @@ def nls(num = 3)
 end
 
 def reboot_and_wait_for_host
-  print "#{nls}Rebooting host and waiting ...#{nls}"
-  ret = ssh_command("nohup #{reboot_command}")
-  #puts ret[:exit_code]
   print "#{nls}Sleeping for 10 seconds ...#{nls}"
   sleep 10
+  print "#{nls}Rebooting host and waiting ...#{nls}"
+  ret = ssh_command("nohup #{reboot_command} &")
+  #puts ret[:exit_code]
   status = 1
   while status > 0
     is_host_rebooting?
     puts "#{nls}Verifying host rebooted ...#{nls}"
     ret = ssh_command("ls >/dev/null")
     status = ret[:exit_code]
+    print "#{nls}Sleeping for 10 seconds ...#{nls}"
     sleep 10
   end
   ret = ssh_command("ls")
@@ -111,7 +112,13 @@ def reboot_and_wait_for_host
   ret[:exit_code]
 end
 
+def flush_output
+  $stdout.flush
+  $stderr.flush
+end
+
 def is_host_rebooting?
+  flush_output
   rebooting = 1
   while rebooting > 0
     print "\n\n\nChecking if host is still rebooting ... "
