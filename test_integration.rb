@@ -10,6 +10,7 @@ $os = nil
 # By default will print output to the screen, you may turn off.
 # Example: ssh_command("ls", p_stdout: false, p_stderr: false )
 def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
+  flush_output
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
@@ -40,6 +41,7 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
     end
     channel.wait
   end
+  flush_output
   return { :exit_code => exit_code, :stdout => stdout, :stderr => stderr }
 end
 
@@ -101,6 +103,7 @@ def reboot_and_wait_for_host
   #puts ret[:exit_code]
   status = 1
   while status > 0
+    flush_output
     is_host_rebooting?
     puts "#{nls}Verifying host rebooted ...#{nls}"
     ret = ssh_command("ls >/dev/null", ssh_timeout: 2)
