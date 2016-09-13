@@ -5,6 +5,7 @@ require 'colorize'
 require 'timeout'
 
 $host = ARGV[0]
+$os = which_os
 
 # This guy returns a hash, exit_code (Fixnum), stdout (Array), stderr (Array)
 # By default won't print output to the screen, you may turn on.
@@ -49,6 +50,10 @@ def which_os
   ssh_command("uname -s")[:stdout].first.chomp.downcase
 end
 
+def os
+  $os
+end
+
 def stop_agent
   puts "#{nls}Stopping and disabling agent!#{nls}"
   ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
@@ -58,7 +63,7 @@ end
 def rsync_revert
   rsync_cmd = String.new
 
-  case which_os
+  case os
   when "linux"
     rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /proc --exclude /sys --exclude /selinux --exclude '/var/run/*.pid' --exclude '/var/run/*/*.pid' --exclude /nfs --exclude /depot --exclude /var/lib/nfs /var/recover/ /"
   when "aix"
@@ -72,7 +77,7 @@ def rsync_revert
 end
 
 def reboot_command(host = $host)
-  case which_os
+  case os
   when "linux"
     "reboot"
   when "aix"
@@ -138,5 +143,6 @@ end
 
 
 # Begin main script
+which_os
 rsync_revert
 reboot_host
