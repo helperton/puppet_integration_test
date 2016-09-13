@@ -10,7 +10,7 @@ def which_os
   ssh_command("uname -s").chomp.downcase
 end
 
-def stop_agent(host)
+def stop_agent
   puts "Stopping and disabling agent!"
   %x(#{ssh_command} 'printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp')
   %x(#{ssh_command} puppet apply /tmp/puppet-service.pp)
