@@ -11,6 +11,7 @@ $host = ARGV[0]
 # Example: ssh_command("ls", p_stdout: true, p_stderr: true )
 # Will make both stdout and stderr print out during the run
 def ssh_command(cmd, options = { :p_stdout => false, :p_stderr => false, :ssh_timeout => 10 })
+  puts "SSH_TIMEOUT: #{:ssh_timeout}"
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
