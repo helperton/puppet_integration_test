@@ -55,9 +55,9 @@ def os
 end
 
 def stop_agent
-  puts "#{nls}Stopping and disabling agent!#{nls}"
+  print "#{nls}Stopping and disabling agent!#{nls}"
   ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
-  puts ssh_command("puppet apply /tmp/puppet-service.pp")[:stdout].join("\n")
+  print ssh_command("puppet apply /tmp/puppet-service.pp")[:stdout].join("\n")
 end
 
 def rsync_revert
@@ -101,7 +101,7 @@ end
 
 def reboot_and_wait_for_host(host = $host)
   stop_agent
-  puts "#{nls}Rebooting host and waiting ...#{nls}"
+  print "#{nls}Rebooting host and waiting ...#{nls}"
   ret = ssh_command("nohup #{reboot_command} &")
   puts ret
   sleep 10
