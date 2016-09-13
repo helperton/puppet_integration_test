@@ -34,7 +34,7 @@ def ssh_command(cmd, options = { :p_stdout => false, :p_stderr => false })
           exit_code = data.read_long
         end
 
-        ch.on_close { print "\n\nEnding command:\n\n#{cmd}\n\nExited with code: #{exit_code}\n\n" }
+        ch.on_close { print "\n\nCommand:\n\n#{cmd}\n\nExited with code: #{exit_code}\n\n" }
       end
     end
     channel.wait
