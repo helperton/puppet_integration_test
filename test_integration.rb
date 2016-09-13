@@ -5,7 +5,7 @@ require 'colorize'
 require 'timeout'
 
 $host = ARGV[0]
-$os = which_os
+$os = nil
 
 # This guy returns a hash, exit_code (Fixnum), stdout (Array), stderr (Array)
 # By default won't print output to the screen, you may turn on.
@@ -47,7 +47,7 @@ def ssh_command(cmd, p_stdout: false, p_stderr: false, ssh_timeout: 10)
 end
 
 def which_os
-  ssh_command("uname -s")[:stdout].first.chomp.downcase
+  $os = ssh_command("uname -s")[:stdout].first.chomp.downcase
 end
 
 def os
