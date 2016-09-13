@@ -99,7 +99,6 @@ def reboot_host
 end
 
 def reboot_and_wait_for_host(host = $host)
-  stop_agent
   print "#{nls}Rebooting host and waiting ...#{nls}"
   ret = ssh_command("nohup #{reboot_command} &")
   #puts ret[:exit_code]
@@ -147,4 +146,5 @@ end
 # Begin main script
 which_os
 rsync_revert
+stop_agent
 reboot_host
