@@ -123,7 +123,7 @@ def is_host_rebooting?
     sleep 10
     begin
       status = Timeout::timeout(20) {
-        ret = ssh_command("who -r", :ssh_timeout => 3600)[:stdout].first.split(/\s+/)[3].to_i
+        ret = ssh_command("who -r", ssh_timeout: 3600)[:stdout].first.split(/\s+/)[3].to_i
       }
     rescue Timeout::Error => e
       puts "Exception #{e} occured, continuing..."
