@@ -6,4 +6,4 @@ def ssh_command(cmd, host = $host)
     "ssh -q -T -o ConnectTimeout=10 -o StrictHostKeyChecking=no #{host} #{cmd}"
 end
 
-ssh_command("ls")
+puts ssh_command("ls")
