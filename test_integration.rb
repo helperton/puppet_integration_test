@@ -109,13 +109,13 @@ def reboot_and_wait_for_host(host = $host)
   while status > 0
     is_host_rebooting?
     puts "#{nls}Verifying host rebooted ...#{nls}"
-    ssh_command("ls >/dev/null")
-    status = $?.exitstatus
+    ret = ssh_command("ls >/dev/null")
+    status = ret[:exit_code]
     sleep 10
   end
   ret = ssh_command("ls")
   puts "#{nls}Host is back up!#{nls}"
-  ret
+  ret[:exit_code]
 end
 
 def is_host_rebooting?
