@@ -10,11 +10,11 @@ $host = ARGV[0]
 # By default won't print output to the screen, you may turn on.
 # Example: ssh_command("ls", p_stdout: true, p_stderr: true )
 # Will make both stdout and stderr print out during the run
-def ssh_command(cmd, options = { :p_stdout => false, :p_stderr => false })
+def ssh_command(cmd, options = { :p_stdout => false, :p_stderr => false, :ssh_timeout => 10 })
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
-  Net::SSH.start($host, 'root', :paranoid => false, :timeout => 10) do |ssh|
+  Net::SSH.start($host, 'root', :paranoid => false, :timeout => options[:ssh_timeout]) do |ssh|
     channel = ssh.open_channel do |ch|
       ch.exec cmd do |ch, success|
         raise "could not execute command" unless success
@@ -120,7 +120,7 @@ def is_host_rebooting?
     sleep 10
     begin
       status = Timeout::timeout(20) {
-        ret = ssh_command("who -r")[:stdout].first.split(/\s+/)[3].to_i
+        ret = ssh_command("who -r", :ssh_timeout => 0)[:stdout].first.split(/\s+/)[3].to_i
       }
     rescue Timeout::Error => e
       puts "Exception #{e} occured, continuing..."
