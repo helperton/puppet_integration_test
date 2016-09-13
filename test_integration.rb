@@ -94,10 +94,10 @@ end
 
 def reboot_and_wait_for_host
   flush_output
-  print "#{nls}Sleeping for 10 seconds ...#{nls}"
-  sleep 10
   print "#{nls}Rebooting host and waiting ...#{nls}"
   ret = ssh_command("nohup #{reboot_command} &")
+  print "#{nls}Sleeping for 10 seconds ...#{nls}"
+  sleep 10
   #puts ret[:exit_code]
   status = 1
   while status > 0
@@ -128,6 +128,7 @@ def is_host_rebooting?
     sleep 10
     begin
       ret = ssh_command("who -r")
+      flush_output
     rescue Exception => e
       print "Exception #{e} occured, continuing...\n"
       next
@@ -138,6 +139,7 @@ def is_host_rebooting?
     else
       rebooting = 0
     end
+    flush_output
   end
 end
 
