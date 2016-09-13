@@ -40,7 +40,7 @@ def ssh_command(cmd, print_stdout = false, print_stderr = false, host = $host)
 end
 
 def which_os
-  ssh_command("uname -s")[1].chomp.downcase
+  ssh_command("uname -s")[1].first.chomp.downcase
 end
 
 def stop_agent
