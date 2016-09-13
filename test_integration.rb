@@ -8,7 +8,7 @@ $host = ARGV[0]
 # By default won't print output to the screen, you may turn on.
 # Example: ssh_command("ls", p_stdout: true, p_stderr: true )
 # Will make both stdout and stderr print out during the run
-def ssh_command(cmd, options)
+def ssh_command(cmd, options = { :p_stdout => false, :p_stderr => false })
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
