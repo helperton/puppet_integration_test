@@ -11,7 +11,6 @@ $os = nil
 # By default will print output to the screen, you may turn off.
 # Example: ssh_command("ls", p_stdout: false, p_stderr: false )
 def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
-  puts "SSH_TIMEOUT: #{ssh_timeout} CMD: #{cmd}"
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
