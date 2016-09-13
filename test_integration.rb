@@ -58,6 +58,7 @@ def stop_agent
   puts "#{nls}Stopping and disabling agent!#{nls}"
   ssh_command("printf \"service { \'puppet\':\n\tensure    => \'stopped\',\n\tenable    => \'false\',\n}\n\" > /tmp/puppet-service.pp")
   ssh_command("puppet apply /tmp/puppet-service.pp")
+  sleep 10
 end
 
 def rsync_revert
