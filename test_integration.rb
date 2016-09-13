@@ -56,7 +56,7 @@ def reboot_host
 end
 
 def reboot_and_wait_for_host(host = $host)
-  stop_agent(host)
+  stop_agent
   puts "#{nls}Rebooting host and waiting ...#{nls}"
   ret = %x(#{ssh_command} "nohup #{reboot_command} &")
   puts ret
