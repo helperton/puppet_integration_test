@@ -6,7 +6,7 @@ Introduction
 
 This script is intented to be used with a Jenkins job and test hosts.
 
-When fully configured, the Jenkins job will kick off the script which will revert the host back to a clean state using rsync.  Then it will kick off 3 runs of Puppet where the first two runs must return 0 or 2 (meaning nothing changed or with changes but no errors).  The final run must exit 0 (meaning, no changes or errors).  It's configured to run every hour on the hour since Puppet runs can take 20+ minutes, it may not make sense to kick off with every commit.  Change the time interval in the jenkins job to fit your needs.
+When fully configured, the Jenkins job will kick off the script which will revert the host back to a clean state using rsync.  Then it will kick off 3 runs of Puppet where the first two runs must return 0 or 2 (meaning nothing changed or with changes but no errors).  The final run must exit 0 (meaning, no changes or errors).  It will reboot the host after the first run since it's the most significant, then run the last two after the host comes back up.  It's configured to run every hour on the hour since Puppet runs can take 20+ minutes, it may not make sense to kick off with every commit.  Change the time interval in the jenkins job to fit your needs.
 
 The reason rsync is used is because it's cross platform and doesn't require access to the hypervisor.  It's a poor man's snaphost :)
 
