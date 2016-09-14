@@ -6,11 +6,11 @@ Introduction
 
 This script is intented to be used with a Jenkins job and test hosts.
 
-When fully configured, the Jenkins job will kick off the script which will revert the host back to a clean state using rsync.  Then it will kick off 3 runs of Puppet where the first two runs must return 0 or 2 (meaning nothing changed or with changes but no errors).  The final run must exit 0 (meaning, no changes or errors).  It's designed to run every hour on the hour since runs can take 20+ minutes, it may not make sense to kick off with every commit.
+When fully configured, the Jenkins job will kick off the script which will revert the host back to a clean state using rsync.  Then it will kick off 3 runs of Puppet where the first two runs must return 0 or 2 (meaning nothing changed or with changes but no errors).  The final run must exit 0 (meaning, no changes or errors).  It's configured to run every hour on the hour since Puppet runs can take 20+ minutes, it may not make sense to kick off with every commit.  Change the time interval in the jenkins job to fit your needs.
 
 The reason rsync is used is because it's cross platform and doesn't require access to the hypervisor.  It's a poor man's snaphost :)
 
-It's primary use case is for module integration testing.  The default config also turns on evaltrace and summarizes the top 5 most expensive resources you have in your catalog.  You can then examine where your Puppet run is spending most of it's time and optimize.
+It's primary use case is for module integration testing.  The default config also turns on evaltrace and summarizes the top 5 most expensive resources you have in your catalog.  You can then examine where your Puppet run is spending most of it's time and optimize.  In our use case we have 30+ modules with 6+ developers all commiting code to our build pipeline environment, these jobs kick off and test that environment on all of our test hosts, Linux, AIX, and Solaris.  This is where we find all of our duplicate declaration errors as well as many other types before we make releases of our code.
 
 The script utilizes a yaml configuration file which includes:
 
