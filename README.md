@@ -76,3 +76,13 @@ mkdir /var/recover
 cd /var/recover
 rsync -av --progress --delete --exclude /var/recover --exclude "/dev/*" --exclude "/proc/*" --exclude "/sys/*" / .
 ```
+
+Example Output
+--------------
+
+![Alt text](/images/jenkins-output1.png?raw=true "Jenkins Job Rsync Revert")
+![Alt text](/images/jenkins-output2.png?raw=true "Jenkins Job Reboot and Wait")
+![Alt text](/images/jenkins-output3.png?raw=true "Jenkins Job Puppet Run 1/3")
+![Alt text](/images/jenkins-output4.png?raw=true "Jenkins Job Puppet Run 1 Profiling Stats")
+![Alt text](/images/jenkins-output5.png?raw=true "Jenkins Job Puppet Run 2")
+![Alt text](/images/jenkins-output6.png?raw=true "Jenkins Job Puppet Run 3 with Success")
