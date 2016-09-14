@@ -2,8 +2,8 @@
 
 puppet:
   flags:
-    - "agent"
     - "--test"
+    - "--evaltrace --logdest=/tmp/puppet_profile_#{run}.log"
 rsync:
   flags:
     - "-av"
