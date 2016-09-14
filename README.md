@@ -23,8 +23,8 @@ Works with 4.x puppet agents, but with some changes could with with 3.8.x
 
 Requirements for the Jenkins job
 --------------------------------
-plugin - Color ANSI Console Output
-plugin - rbenv
+* plugin - Color ANSI Console Output
+* plugin - rbenv
 
 Source Code Management Section
 ------------------------------
