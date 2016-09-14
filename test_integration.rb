@@ -5,6 +5,7 @@ require 'colorize'
 
 $host = ARGV[0]
 $os = nil
+$config = nil
 
 # This guy returns a hash, exit_code (Fixnum), stdout (Array), stderr (Array)
 # By default will print output to the screen, you may turn off.
@@ -68,18 +69,14 @@ def stop_agent
   ssh_command("puppet apply /tmp/puppet-service.pp")
 end
 
+def rsync_build_cmd
+  excludes = $config['rsync']['excludes'][os].map { |e| "--exclude #{e}" }.join(" ")
+  flags = $config['rsync']['flags'].join(" ")
+  { :excludes => excludes, :flags => flags }
+end
+
 def rsync_revert
-  rsync_cmd = String.new
-
-  case os
-  when "linux"
-    rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /proc --exclude /sys --exclude /selinux --exclude '/var/run/*.pid' --exclude '/var/run/*/*.pid' --exclude /nfs --exclude /depot --exclude /var/lib/nfs /var/recover/ /"
-  when "aix"
-    rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /proc --exclude /nfs /var/recover/ /"
-  when "sunos"
-   rsync_cmd = "rsync -av --progress --delete --exclude /var/recover --exclude /dev --exclude /devices --exclude /proc --exclude /system --exclude /nfs --exclude /etc/svc/volatile --exclude /etc/mnttab --exclude /etc/dfs/sharetab --exclude /var/run --exclude '/etc/sysevent/*door*' --exclude '/etc/sysevent/*channel*' --exclude /rpool /var/recover/ /"
-  end
-
+  rsync_cmd = "rsync #{rsync_build_cmd[:flags]} #{rsync_build_cmd[:excludes]} /var/recover/ /"
   print "#{nls}Reverting host to fresh state ...#{nls}"
   ssh_command(rsync_cmd)
 end
@@ -209,8 +206,13 @@ def top_stats_num
   5
 end
 
+def do_set_config
+  $config = YAML.load_file("./test_integration.yaml")
+end
+
 # Begin main script
 flush_output
+do_set_config
 which_os
 rsync_revert
 reboot_and_wait_for_host
