@@ -86,7 +86,7 @@ def rsync_revert
   ssh_command(rsync_cmd)
 end
 
-def reboot_command(host = $host)
+def reboot_command
   case os
   when "linux"
     "reboot"
@@ -134,7 +134,7 @@ end
 def is_host_rebooting?
   rebooting = 1
   while rebooting > 0
-    print "\n\n\nChecking if host is still rebooting ... "
+    print "#{nls}Checking if host is still rebooting ... "
     ret = nil
     sleep 10
     begin
@@ -157,12 +157,12 @@ def puppet_run_cmd(run)
 end
 
 def print_errors(stderr)
-  print "\n\n"
+  print nls
   print "Errors:\n"
   stderr.each do |err|
     puts err
   end
-  print "\n\n"
+  print nls
 end
 
 def do_print_sort_eval_time(time, run)
@@ -172,7 +172,7 @@ def do_print_sort_eval_time(time, run)
 end
 
 def do_puppet_runs
-  print "\n\n\nRunning Puppet Agent (1/3), should return 2 (HAS CHANGES)...\n\n\n"
+  print "#{nls}Running Puppet Agent (1/3), should return 2 (HAS CHANGES)...#{nls}"
   ret = ssh_command(puppet_run_cmd(1), puppet_run: true)
   do_print_sort_eval_time(ret[:eval_time], 1)
   if ret[:exit_code] != 2
@@ -182,7 +182,7 @@ def do_puppet_runs
 
   reboot_and_wait_for_host
 
-  print "\n\n\nRunning Puppet Agent (2/3), should return 2 (HAS CHANGES)...\n\n\n"
+  print "#{nls}Running Puppet Agent (2/3), should return 2 (HAS CHANGES)...#{nls}"
   ret = ssh_command(puppet_run_cmd(2), puppet_run: true)
   do_print_sort_eval_time(ret[:eval_time], 2)
   if ret[:exit_code] != 2
@@ -190,7 +190,7 @@ def do_puppet_runs
     exit ret[:exit_code]
   end
 
-  print "\n\n\nRunning Puppet Agent (3/3), should return 0 (NO CHANGES OR ERRORS)...\n\n\n"
+  print "#{nls}Running Puppet Agent (3/3), should return 0 (NO CHANGES OR ERRORS)...#{nls}"
   ret = ssh_command(puppet_run_cmd(3), puppet_run: true)
   do_print_sort_eval_time(ret[:eval_time], 3)
   if ret[:exit_code] != 0
