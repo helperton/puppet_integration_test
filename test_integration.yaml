@@ -1,0 +1,33 @@
+---
+
+rsync:
+  flags:
+    - "-av"
+    - "--progress"
+    - "--delete"
+  excludes:
+    linux:
+      - "/sys/*"
+      - "/selinux/*"
+      - "/var/run/*.pid"
+      - "/var/run/*/*.pid"
+      - "/var/lib/nfs/*"
+    aix:
+    sunos:
+      - "/devices/*"
+      - "/system/*"
+      - "/etc/svc/volatile/*"
+      - "/etc/mnttab"
+      - "/etc/dfs/sharetab"
+      - "/var/run"
+      - "/etc/sysevent/*door*"
+      - "/etc/sysevent/*channel*"
+      - "/rpool"
+    common:
+      - /var/recover
+      - "/dev/*"
+      - "/proc/*"
+      - /nfs
+      - /depot
+
+
