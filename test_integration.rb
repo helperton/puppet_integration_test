@@ -73,7 +73,7 @@ end
 
 def rsync_build_cmd
   combined_excludes = $config['rsync']['excludes'][os] + $config['rsync']['excludes']['common']
-  final_excludes = combined_excludes.map { |e| "--exclude #{e}" }.join(" ")
+  final_excludes = combined_excludes.map { |e| "--exclude \"#{e}\"" }.join(" ")
   flags = $config['rsync']['flags'].join(" ")
   { :excludes => final_excludes, :flags => flags }
 end

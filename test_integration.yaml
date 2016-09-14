@@ -24,10 +24,10 @@ rsync:
       - "/etc/sysevent/*channel*"
       - "/rpool"
     common:
-      - /var/recover
+      - "/var/recover"
       - "/dev/*"
       - "/proc/*"
-      - /nfs
-      - /depot
+      - "/nfs"
+      - "/depot"
 
 
