@@ -26,7 +26,7 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run
           if puppet_run
             data.match(/Info: (.*): Evaluated in (.*) seconds/)
             eval_time[$1] = $2 unless ($1.nil? or $2.nil?)
-            if data =~ /Info: .*: Evaluated in .* seconds|Debug: .*/
+            if data =~ /Info: .*: (Starting to evaluate the resource|Evaluated in .* seconds)|Debug: .*/
               $stdout.print "\r"
             else
               $stdout.print data if p_stdout
