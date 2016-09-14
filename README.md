@@ -68,7 +68,7 @@ cd tsthost001
 10. if it worked, great!
 11. be sure to download and enable the required plugins
 12. make sure your test host is pinned to the environment or otherwise classified the way you want
-13. snapshot the desired clean state of your test host
+13. snapshot the desired clean state of your test host (see next step)
 14. for linux, this is pretty good, adjust to fit your needs, add excludes for other dirs you don't want to keep such as nfs mounts
 
 ```
