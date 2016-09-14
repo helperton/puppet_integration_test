@@ -12,7 +12,6 @@ $config = nil
 # By default will print output to the screen, you may turn off.
 # Example: ssh_command("ls", p_stdout: false, p_stderr: false )
 def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run: false)
-  #flush_output
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
@@ -27,8 +26,8 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run
           if puppet_run
             data.match(/Info: (.*): Evaluated in (.*) seconds/)
             eval_time[$1] = $2 unless ($1.nil? or $2.nil?)
-            if data =~ /Info: .*: Evaluted in .* seconds|Debug: .*/
-              next
+            if data =~ /Info: .*: Evaluated in .* seconds|Debug: .*/
+              $stdout.print "\r"
             else
               $stdout.print data if p_stdout
             end
@@ -41,7 +40,6 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run
         ch.on_extended_data do |c, type, data|
           stderr.push(data)
           $stderr.print data if p_stderr
-          $stderr.flush
         end
 
         ch.on_request("exit-status") do |c, data|
@@ -53,7 +51,6 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run
     end
     channel.wait
   end
-  #flush_output
   return { :exit_code => exit_code, :stdout => stdout, :stderr => stderr, :eval_time => eval_time }
 end
 
@@ -106,7 +103,6 @@ end
 
 def reboot_and_wait_for_host
   stop_agent
-  #flush_output
   print "#{nls}Rebooting host and waiting ...#{nls}"
   ret = ssh_command("nohup #{reboot_command} &")
   print "#{nls}Sleeping for 10 seconds ...#{nls}"
@@ -114,14 +110,12 @@ def reboot_and_wait_for_host
   #puts ret[:exit_code]
   status = 1
   while status > 0
-    #flush_output
     is_host_rebooting?
     puts "#{nls}Verifying host rebooted ...#{nls}"
     ret = ssh_command("ls >/dev/null", ssh_timeout: 2)
     status = ret[:exit_code]
     print "#{nls}Sleeping for 5 seconds ...#{nls}"
     sleep 5
-    #flush_output
   end
   ret = ssh_command("ls", ssh_timeout: 2)
   puts "#{nls}Host is back up!#{nls}"
@@ -129,14 +123,11 @@ def reboot_and_wait_for_host
 end
 
 def flush_output
-  #$stdout.flush
-  #$stderr.flush
   $stdout.sync = true
   $stderr.sync = true
 end
 
 def is_host_rebooting?
-  #flush_output
   rebooting = 1
   while rebooting > 0
     print "\n\n\nChecking if host is still rebooting ... "
@@ -144,7 +135,6 @@ def is_host_rebooting?
     sleep 10
     begin
       ret = ssh_command("who -r", ssh_timeout: 2)
-      #flush_output
     rescue Exception => e
       print "Exception #{e} occured, continuing...\n"
       next
@@ -155,7 +145,6 @@ def is_host_rebooting?
     else
       rebooting = 0
     end
-    #flush_output
   end
 end
 
