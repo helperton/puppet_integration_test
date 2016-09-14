@@ -162,7 +162,7 @@ def print_errors(stderr)
 end
 
 def do_print_sort_eval_time(time, run)
-  print "\n\n*** Begin Run #{run} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
+  print "\n\n*** Begin Run #{run} Top #{top_stats_num} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
   time.sort_by {|_key, value| value.to_f}.last(top_stats_num).map { |l| print "\nResource: #{l[0].to_s.colorize(:green)}\nSeconds: #{l[1].to_s.colorize(:red)}\n" }
   print "\n\n*** End Run #{run} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
 end
