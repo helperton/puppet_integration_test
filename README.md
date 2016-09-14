@@ -17,12 +17,16 @@ The script utilizes a yaml configuration file which includes:
 * excludes for os specific files and directories
 * puppet agent config settings
 
+Compatibility
+-------------
+Works with 4.x puppet agents, but with some changes could with with 3.8.x
+
 Requirements for the Jenkins job
 --------------------------------
 plugin - Color ANSI Console Output
 plugin - rbenv
 
-![alt tag](https://raw.githubusercontent.com/helperton/puppet_integration_test/master/images/jenkins-plugins.png)
+[[https://raw.githubusercontent.com/helperton/puppet_integration_test/master/images/jenkins-plugins.png]]
 
 How to import the Jenkins job
 -----------------------------
@@ -39,6 +43,7 @@ How to import the Jenkins job
 10. test your connection, switch user to jenkins and try out ssh (e.g. su - jenkins -s /bin/sh ; ssh root@<your test host>)
 11. if it worked, great!
 12. be sure to download and enable the required plugins
+13. make sure your test host is pinned to the environment or otherwise classified the way you want
 
 Examples
 --------
