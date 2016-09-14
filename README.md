@@ -34,16 +34,30 @@ How to import the Jenkins job
 1. SSH into your jenkins host
 2. Switch to your jenkins user (e.g. su - jenkins -s /bin/sh)
 3. cd jobs
+
+```
+cd /var/lib/jenkins/jobs
+```
+
 4. mkdir tsthost001 (e.g. tsthost001)
-5. cd tsthost001
-6. put the config file (config.xml -- found in the root of the main repo) into this directory
-7. reload Jenkins (Jenkins --> Manage Jenkins --> Reload Configuration from Disk)
-8. your new job should show up
-9. you will need to setup ssh key trust to your test host using Jenkins ssh identity (e.g. id_rsa.pub will need to go into /root/.ssh/authorized_keys on the test host)
-10. test your connection, switch user to jenkins and try out ssh (e.g. su - jenkins -s /bin/sh ; ssh root@tsthost001)
-11. if it worked, great!
-12. be sure to download and enable the required plugins
-13. make sure your test host is pinned to the environment or otherwise classified the way you want
+
+```
+mkdir tsthost001 ; cd tsthost001
+```
+
+5. put the config file (config.xml -- found in the examples directory of the main repo) into this directory
+6. reload Jenkins (Jenkins --> Manage Jenkins --> Reload Configuration from Disk)
+7. your new job should show up
+8. you will need to setup ssh key trust to your test host using Jenkins ssh identity (e.g. id_rsa.pub will need to go into /root/.ssh/authorized_keys on the test host)
+9. test your connection, switch user to jenkins and try out ssh (e.g. su - jenkins -s /bin/sh ; ssh root@tsthost001)
+10. if it worked, great!
+11. be sure to download and enable the required plugins
+12. make sure your test host is pinned to the environment or otherwise classified the way you want
+13. snapshot the desired clean state of your test host
+14. for linux, this is pretty good, adjust to fit your needs, add excludes for other dirs you don't want to keep such as nfs mounts
+
+```mkdir /var/recover ; cd /var/recover ; rsync -av --progress --delete --exclude /var/recover --exclude "/dev/*" --exclude "/proc/*" --exclude "/sys/*" / .
+```
 
 Examples
 --------
