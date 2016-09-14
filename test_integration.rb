@@ -9,11 +9,12 @@ $os = nil
 # This guy returns a hash, exit_code (Fixnum), stdout (Array), stderr (Array)
 # By default will print output to the screen, you may turn off.
 # Example: ssh_command("ls", p_stdout: false, p_stderr: false )
-def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
+def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run: false)
   flush_output
   exit_code = 0
   stdout = Array.new
   stderr = Array.new
+  eval_time = Hash.new
   Net::SSH.start($host, 'root', :paranoid => false, :timeout => ssh_timeout) do |ssh|
     channel = ssh.open_channel do |ch|
       ch.exec cmd do |ch, success|
@@ -21,6 +22,11 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
         # "on_data" is called when the process writes something to stdout
         ch.on_data do |c, data|
           stdout.push(data)
+          if puppet_run
+            data.match(/Info: (.*): Evaluated in (.*) seconds/)
+            evaltime[$1] = $2 unless ($1.nil? or $2.nil?)
+          end
+
           $stdout.print data if p_stdout
           $stdout.flush
         end
@@ -36,13 +42,13 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10)
           exit_code = data.read_long
         end
 
-        ch.on_close { print "\n\nCommand:\n\n#{cmd.colorize(:blue)}\n\nExited with code: #{exit_code}\n\n" }
+        ch.on_close { print "\n\nCommand Exited:\n\n#{cmd.colorize(:blue)}\n\nExit code: #{exit_code}\n\n" }
       end
     end
     channel.wait
   end
   flush_output
-  return { :exit_code => exit_code, :stdout => stdout, :stderr => stderr }
+  return { :exit_code => exit_code, :stdout => stdout, :stderr => stderr, :eval_time => eval_time }
 end
 
 def which_os
@@ -95,6 +101,7 @@ def nls(num = 3)
 end
 
 def reboot_and_wait_for_host
+  stop_agent
   flush_output
   print "#{nls}Rebooting host and waiting ...#{nls}"
   ret = ssh_command("nohup #{reboot_command} &")
@@ -146,9 +153,57 @@ def is_host_rebooting?
   end
 end
 
+def puppet_run_cmd(run)
+  "/opt/puppet/bin/puppet agent -td --evaltrace --logdest=/tmp/puppet_profile_#{run}.log"
+end
+
+def print_errors(stderr)
+  print "\n\n"
+  print "Errors:\n"
+  stderr.each do |err|
+    puts err
+  end
+  print "\n\n"
+end
+
+def do_print_sort_eval_time(time, run)
+  print "\n\n*** Begin Run #{run} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
+  time.sort_by {|_key, value| value.to_f}.map { |l| print "\nResource: #{l[0].to_s.colorize(:green)}\nSeconds: #{l[1].to_s.colorize(:red)}\n" }
+  print "\n\n*** End Run #{run} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
+end
+
+def do_puppet_runs
+  print "\n\n\nRunning Puppet Agent (1/3), should return 2 (HAS CHANGES)...\n\n\n"
+  ret = ssh_command(puppet_run_command(1), puppet_run: true)
+  do_print_sort_eval_time(ret[:eval_time], 1)
+  if ret[:exit_code] != 2
+    print_errors(ret[:stderr])
+    exit ret[:exit_code]
+  end
+
+  reboot_and_wait_for_host
+
+  print "\n\n\nRunning Puppet Agent (2/3), should return 2 (HAS CHANGES)...\n\n\n"
+  ret = ssh_command(puppet_run_command(2), puppet_run: true)
+  do_print_sort_eval_time(ret[:eval_time], 2)
+  if ret[:exit_code] != 2
+    print_errors(ret[:stderr])
+    exit ret[:exit_code]
+  end
+
+  print "\n\n\nRunning Puppet Agent (3/3), should return 0 (NO CHANGES OR ERRORS)...\n\n\n"
+  ret = ssh_command(puppet_run_command(3), puppet_run: true)
+  do_print_sort_eval_time(ret[:eval_time], 3)
+  if ret[:exit_code] != 0
+    print_errors(ret[:stderr])
+  end
+  exit ret
+end
 
 # Begin main script
 which_os
 rsync_revert
-stop_agent
 reboot_and_wait_for_host
+rsync_revert
+reboot_and_wait_for_host
+do_puppet_runs
