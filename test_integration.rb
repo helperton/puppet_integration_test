@@ -80,9 +80,9 @@ end
 
 def rsync_revert
   rsync_cmd = "rsync #{rsync_build_cmd[:flags]} #{rsync_build_cmd[:excludes]} /var/recover/ /"
-  print "DEBUG RSYNC CMD: #{rsync_cmd}"
+  #print "DEBUG RSYNC CMD: #{rsync_cmd}"
   print "#{nls}Reverting host to fresh state ...#{nls}"
-  #ssh_command(rsync_cmd)
+  ssh_command(rsync_cmd)
 end
 
 def reboot_command(host = $host)
