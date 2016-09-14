@@ -10,7 +10,7 @@ When fully configured, the Jenkins job will kick off the script which will rever
 
 The reason rsync is used is because it's cross platform and doesn't require access to the hypervisor.  It's a poor man's snaphost :)
 
-It's primary use case is for module integration testing.  The default config also turns on evaltrace and summarizes the top 5 most expensive resources you have in your catalog.  You can then examine where your Puppet run is spending most of it's time and optimize.  In our use case we have 30+ modules with 6+ developers all commiting code to our build pipeline environment, these jobs kick off and test that environment on all of our test hosts, Linux, AIX, and Solaris.  This is where we find all of our duplicate declaration errors as well as many other types before we make releases of our code.
+It's primary use case is for module integration testing.  The default config also turns on evaltrace and summarizes the top 5 most expensive resources you have in your catalog.  You can then examine where your Puppet run is spending most of it's time and optimize.  In our use case we have 30+ modules with 6+ developers all commiting code to our build pipeline environment, these jobs kick off and test that environment on all of our test hosts, Linux, AIX, and Solaris.  This is where we find all of our duplicate declaration, catalog compile, missing hiera data, etc, etc errors before we make releases of our code.
 
 The script utilizes a yaml configuration file which includes:
 
