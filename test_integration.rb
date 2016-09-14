@@ -174,7 +174,7 @@ end
 
 def do_puppet_runs
   print "\n\n\nRunning Puppet Agent (1/3), should return 2 (HAS CHANGES)...\n\n\n"
-  ret = ssh_command(puppet_run_command(1), puppet_run: true)
+  ret = ssh_command(puppet_run_cmd(1), puppet_run: true)
   do_print_sort_eval_time(ret[:eval_time], 1)
   if ret[:exit_code] != 2
     print_errors(ret[:stderr])
@@ -184,7 +184,7 @@ def do_puppet_runs
   reboot_and_wait_for_host
 
   print "\n\n\nRunning Puppet Agent (2/3), should return 2 (HAS CHANGES)...\n\n\n"
-  ret = ssh_command(puppet_run_command(2), puppet_run: true)
+  ret = ssh_command(puppet_run_cmd(2), puppet_run: true)
   do_print_sort_eval_time(ret[:eval_time], 2)
   if ret[:exit_code] != 2
     print_errors(ret[:stderr])
@@ -192,7 +192,7 @@ def do_puppet_runs
   end
 
   print "\n\n\nRunning Puppet Agent (3/3), should return 0 (NO CHANGES OR ERRORS)...\n\n\n"
-  ret = ssh_command(puppet_run_command(3), puppet_run: true)
+  ret = ssh_command(puppet_run_cmd(3), puppet_run: true)
   do_print_sort_eval_time(ret[:eval_time], 3)
   if ret[:exit_code] != 0
     print_errors(ret[:stderr])
