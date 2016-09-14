@@ -199,7 +199,7 @@ def do_puppet_runs
   if ret[:exit_code] != 0
     print_errors(ret[:stderr])
   end
-  exit ret
+  exit ret[:exit_code]
 end
 
 # Begin main script
