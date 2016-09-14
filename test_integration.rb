@@ -2,6 +2,7 @@
 
 require 'net/ssh'
 require 'colorize'
+require 'yaml'
 
 $host = ARGV[0]
 $os = nil
