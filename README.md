@@ -34,8 +34,8 @@ How to import the Jenkins job
 1. SSH into your jenkins host
 2. Switch to your jenkins user (e.g. su - jenkins -s /bin/sh)
 3. cd jobs
-4. mkdir <your job name> (e.g. tsthost001)
-5. cd <your job name>
+4. mkdir <<your job name>> (e.g. tsthost001)
+5. cd <<your job name>>
 6. put the config file (config.xml -- found in the root of the main repo) into this directory
 7. reload Jenkins (Jenkins --> Manage Jenkins --> Reload Configuration from Disk)
 8. your new job should show up
