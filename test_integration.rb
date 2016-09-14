@@ -115,8 +115,8 @@ def reboot_and_wait_for_host
     puts "#{nls}Verifying host rebooted ...#{nls}"
     ret = ssh_command("ls >/dev/null", ssh_timeout: 2)
     status = ret[:exit_code]
-    print "#{nls}Sleeping for 10 seconds ...#{nls}"
-    sleep 10
+    print "#{nls}Sleeping for 5 seconds ...#{nls}"
+    sleep 5
     #flush_output
   end
   ret = ssh_command("ls", ssh_timeout: 2)
