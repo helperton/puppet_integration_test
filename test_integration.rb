@@ -74,6 +74,11 @@ def rsync_build_cmd
   { :excludes => final_excludes, :flags => flags }
 end
 
+def puppet_build_cmd
+  flags = $config['puppet']['flags'].join(" ")
+  { :flags => flags }
+end
+
 def rsync_revert
   rsync_cmd = "rsync #{rsync_build_cmd[:flags]} #{rsync_build_cmd[:excludes]} /var/recover/ /"
   #print "DEBUG RSYNC CMD: #{rsync_cmd}"
@@ -148,7 +153,7 @@ def is_host_rebooting?
 end
 
 def puppet_run_cmd(run)
-  "/opt/puppetlabs/bin/puppet agent -t --evaltrace --logdest=/tmp/puppet_profile_#{run}.log"
+  "/opt/puppetlabs/bin/puppet #{puppet_build_cmd} --evaltrace --logdest=/tmp/puppet_profile_#{run}.log"
 end
 
 def print_errors(stderr)
@@ -202,12 +207,16 @@ def do_set_config
   $config = YAML.load_file("./test_integration.yaml")
 end
 
+def do_rsync_revert
+  rsync_revert
+  reboot_and_wait_for_host
+  rsync_revert
+  reboot_and_wait_for_host
+end
+
 # Begin main script
 flush_output
 do_set_config
 which_os
-rsync_revert
-reboot_and_wait_for_host
-rsync_revert
-reboot_and_wait_for_host
+do_rsync_revert
 do_puppet_runs

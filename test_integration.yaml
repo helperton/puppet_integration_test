@@ -1,5 +1,9 @@
 ---
 
+puppet:
+  flags:
+    - "agent"
+    - "--test"
 rsync:
   flags:
     - "-av"
