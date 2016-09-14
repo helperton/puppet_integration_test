@@ -72,9 +72,10 @@ def stop_agent
 end
 
 def rsync_build_cmd
-  excludes = $config['rsync']['excludes'][os].map { |e| "--exclude #{e}" }.join(" ")
+  combined_excludes = $config['rsync']['excludes'][os] + $config['rsync']['excludes']['common']
+  final_excludes = combined_excludes.map { |e| "--exclude #{e}" }.join(" ")
   flags = $config['rsync']['flags'].join(" ")
-  { :excludes => excludes, :flags => flags }
+  { :excludes => final_excludes, :flags => flags }
 end
 
 def rsync_revert
