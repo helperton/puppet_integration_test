@@ -56,7 +56,10 @@ mkdir tsthost001 ; cd tsthost001
 13. snapshot the desired clean state of your test host
 14. for linux, this is pretty good, adjust to fit your needs, add excludes for other dirs you don't want to keep such as nfs mounts
 
-```mkdir /var/recover ; cd /var/recover ; rsync -av --progress --delete --exclude /var/recover --exclude "/dev/*" --exclude "/proc/*" --exclude "/sys/*" / .
+```
+mkdir /var/recover
+cd /var/recover
+rsync -av --progress --delete --exclude /var/recover --exclude "/dev/*" --exclude "/proc/*" --exclude "/sys/*" / .
 ```
 
 Examples
