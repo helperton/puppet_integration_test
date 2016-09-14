@@ -26,7 +26,16 @@ Requirements for the Jenkins job
 plugin - Color ANSI Console Output
 plugin - rbenv
 
-![Alt text](/images/jenkins-plugins.png?raw=true "Jenkins Plugin Config")
+Plugin Section
+--------------
+
+![Alt text](/images/jenkins-plugins.png?raw=true "Jenkins Plugin Section")
+
+Build Section
+-------------
+
+![Alt text](/images/jenkins-build.png?raw=true "Jenkins Build Section")
+
 
 How to import the Jenkins job
 -----------------------------
