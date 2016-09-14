@@ -153,7 +153,7 @@ def is_host_rebooting?
 end
 
 def puppet_run_cmd(run)
-  "/opt/puppetlabs/bin/puppet agent #{puppet_build_cmd}"
+  "/opt/puppetlabs/bin/puppet agent #{puppet_build_cmd[:flags]}"
 end
 
 def print_errors(stderr)
