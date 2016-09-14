@@ -76,6 +76,3 @@ mkdir /var/recover
 cd /var/recover
 rsync -av --progress --delete --exclude /var/recover --exclude "/dev/*" --exclude "/proc/*" --exclude "/sys/*" / .
 ```
-
-Examples
---------
