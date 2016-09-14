@@ -25,6 +25,7 @@ def ssh_command(cmd, p_stdout: true, p_stderr: true, ssh_timeout: 10, puppet_run
           if puppet_run
             data.match(/Info: (.*): Evaluated in (.*) seconds/)
             eval_time[$1] = $2 unless ($1.nil? or $2.nil?)
+            next
           end
 
           $stdout.print data if p_stdout
@@ -170,7 +171,7 @@ end
 
 def do_print_sort_eval_time(time, run)
   print "\n\n*** Begin Run #{run} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
-  time.sort_by {|_key, value| value.to_f}.map { |l| print "\nResource: #{l[0].to_s.colorize(:green)}\nSeconds: #{l[1].to_s.colorize(:red)}\n" }
+  time.sort_by {|_key, value| value.to_f}.last(top_stats_num).map { |l| print "\nResource: #{l[0].to_s.colorize(:green)}\nSeconds: #{l[1].to_s.colorize(:red)}\n" }
   print "\n\n*** End Run #{run} Resource Evaluation Profiling Statistics ***\n\n".colorize(:light_blue)
 end
 
@@ -200,6 +201,10 @@ def do_puppet_runs
     print_errors(ret[:stderr])
   end
   exit ret[:exit_code]
+end
+
+def top_stats_num
+  5
 end
 
 # Begin main script
