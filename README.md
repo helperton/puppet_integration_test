@@ -42,7 +42,8 @@ cd /var/lib/jenkins/jobs
 4. mkdir tsthost001 (e.g. tsthost001)
 
 ```
-mkdir tsthost001 ; cd tsthost001
+mkdir tsthost001
+cd tsthost001
 ```
 
 5. put the config file (config.xml -- found in the examples directory of the main repo) into this directory
