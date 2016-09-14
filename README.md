@@ -26,6 +26,11 @@ Requirements for the Jenkins job
 plugin - Color ANSI Console Output
 plugin - rbenv
 
+Source Code Management Section
+------------------------------
+
+![Alt text](/images/jenkins-source-code-management.png?raw=true "Jenkins Source Code Management Section")
+
 Plugin Section
 --------------
 
