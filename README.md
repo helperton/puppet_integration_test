@@ -26,7 +26,7 @@ Requirements for the Jenkins job
 plugin - Color ANSI Console Output
 plugin - rbenv
 
-[[https://raw.githubusercontent.com/helperton/puppet_integration_test/master/images/jenkins-plugins.png]]
+![Alt text](/images/jenkins-plugins.png?raw=true "Jenkins Plugin Config")
 
 How to import the Jenkins job
 -----------------------------
